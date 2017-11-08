@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/normegil/docker"
-	"github.com/normegil/zookeeper-rest/modules/test"
 	"github.com/pkg/errors"
 	"gopkg.in/mgo.v2"
 )
@@ -15,7 +14,7 @@ const MONGO_PORTS string = "[50017;50037]"
 
 // Test_NewMongoSession will create a session connected to a mongo instance inside a docker. For Test only.
 func Test_NewMongoSession(t testing.TB) (Session, func()) {
-	mongoInfo, closeFn := test.NewMongo(t)
+	mongoInfo, closeFn := Test_NewMongo(t)
 	host := net.TCPAddr{mongoInfo.Address, mongoInfo.Port, ""}
 	session, err := mgo.Dial(host.String())
 	if nil != err {
@@ -31,15 +30,23 @@ func Test_NewMongoSession(t testing.TB) (Session, func()) {
 // Test_NewMongo will create a new mongo instance inside a docker and return connection infos. For Test only.
 func Test_NewMongo(t testing.TB) (MongoInfo, func()) {
 	mainPortBinding := docker.PortBinding{"tcp", mongoInternalPort, MONGO_PORTS}
-	info, close := NewDocker(t, docker.Options{
+	info, close, err := docker.New(docker.Options{
 		Name:  "MongoDB",
 		Image: "mongo:latest",
 		Ports: []docker.PortBinding{mainPortBinding},
 	})
+	if err != nil {
+		t.Fatal(errors.Wrap(err, "Cannot create mongo instance"))
+	}
 	return MongoInfo{
-		Address: info.Address,
-		Port:    info.Ports[mainPortBinding],
-	}, close
+			Address: info.Address,
+			Port:    info.Ports[mainPortBinding],
+		}, func() {
+			err := close()
+			if err != nil {
+				t.Fatal(errors.Wrap(err, "Closing mongo docker"))
+			}
+		}
 }
 
 type MongoInfo struct {

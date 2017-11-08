@@ -50,12 +50,6 @@
   version = "0.0.1"
 
 [[projects]]
-  name = "github.com/normegil/zookeeper-rest"
-  packages = ["modules/test","modules/tools"]
-  revision = "7e59ef97a093a52e1f53e608548adf93efaa3b3f"
-  version = "0.1.0"
-
-[[projects]]
   name = "github.com/pkg/errors"
   packages = ["."]
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
@@ -88,6 +82,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9d26deb62fb16060cf35a510457b2cfb0054a59187ca5a533b49bacef6802865"
+  inputs-digest = "a7f6bd01d7cf60d30fe15f36c3d2d0c25c9116760152c90aa62ba35ebc3ff1b8"
   solver-name = "gps-cdcl"
   solver-version = 1
